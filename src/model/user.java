@@ -1,41 +1,48 @@
 package model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
 /**
- * Created by Andreea on 25/11/14.
+ * Model class for the user entity. 
+ * @author Radu
+ *
  */
-public class user {
 
-    private String username;
-    private String password;
-    private String job;
+@Entity
+@Table(name = "Users")
+public class User extends BaseEntity{
+	private static final long serialVersionUID = 1L;
 
-    public user(String username, String password, String job) {
-        this.username = username;
-        this.password = password;
-        this.job = job;
-    }
 
-    public String getUsername() {
-        return username;
-    }
+	private String username;
+	private String password;
 
-    public void setUsername() {
-        this.username = username;
-    }
+	
+	public User(){
+		super();
+	}
+	@Column(name = "username")
+	public String getName() {
+		return username;
+	}
 
-    public String getPassword() {
-        return password;
-    }
+	public void setName(String name) {
+		this.username = name;
+	}
+	@Column(name = "password")
+	public String getPassword() {
+		return password;
+	}
 
-    public void setPassword() {
-        this.password = password;
-    }
+	public void setPassword(String password) {
+		this.password = password;
+	}
 
-    public String getJob() {
-        return job;
-    }
-
-    public void setJob() {
-        this.job = job;
-    }
+	
+	@Override
+	public String toString() {
+		return this.username + " " + this.password;
+	}
 }
