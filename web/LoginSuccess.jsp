@@ -12,8 +12,7 @@
 </head>
 <body>
     <%
-        model.user user = (model.user) request.getAttribute("user");
-        out.println("Welcome " + user.getUsername());
+        out.println("Welcome " + session.getAttribute("username"));
 
     %>
 </body>
