@@ -6,55 +6,18 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title></title>
 
     <link href="css/styles.css" rel="stylesheet" type="text/css">
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="jquery.js"></script>
+    <title>Morminte</title>
 </head>
 <body>
 <div class="menu">
     <div>
         <img class="logo" src="resources/logo.gif" alt="logo">
     </div>
-    <ul class="nav">
-        <li>
-            <a href="">
-                <span>Programare inmormantari</span>
-            </a>
-        </li>
-        <li>
-            <a href="">
-                <span>Persoane</span>
-            </a>
-        </li>
-        <li>
-            <a href="" class="active">
-                <span>Morminte</span>
-            </a>
-        </li>
-        <li>
-            <a href="">
-                <span>Evidenta sesizarilor</span>
-            </a>
-        </li>
-        <li>
-            <a href="">
-                <span>Evidenta contractelor de concesiune</span>
-            </a>
-        </li>
-        <li>
-            <a href="">
-                <span>Evidenta cereri locuri</span>
-            </a>
-        </li>
-        <li>
-            <a href="">
-                <span>Iesire</span>
-            </a>
-        </li>
-    </ul>
 </div>
 
 <div class="content">

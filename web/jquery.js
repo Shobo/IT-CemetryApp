@@ -1,11 +1,7 @@
-
 $(document).ready(function () {
-    $(".nav li a").click(function (e) {
-       $(".nav li a").removeClass("active");
-       $(this).addClass("active");
-       e.preventDefault();
-       loadOptions($(this).text());
-   });
+    loadMenu();
+    if (window.location.search.indexOf('act=') == -1)
+        loadOptions($("title").text());
 });
 
 function loadOptions(name) {
@@ -27,4 +23,26 @@ function loadOptions(name) {
 
         document.getElementsByClassName("content")[0].appendChild(f)
     });
+}
+
+function loadMenu() {
+    var title = $("title").text();
+    $.getJSON('resources/menu.json', function(data) {
+        var ul = document.createElement("ul");
+        ul.setAttribute("class", "nav");
+
+        $.each(data, function(key, val) {
+            var li = document.createElement("li");
+            var anch = document.createElement("a");
+            anch.setAttribute('href', val.Ref)
+            if (val.Name == title)
+                anch.setAttribute("class", "active");
+            var span = document.createElement("span");
+            span.innerHTML = val.Name;
+            anch.appendChild(span);
+            li.appendChild(anch);
+            ul.appendChild(li);
+        })
+        document.getElementsByClassName("menu")[0].appendChild(ul);
+    })
 }

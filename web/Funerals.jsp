@@ -4,7 +4,7 @@ pageEncoding="ISO-8859-1"%>
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title></title>
+    <title>Programare inmormantari</title>
 
     <link href="css/styles.css" rel="stylesheet" type="text/css">
 
@@ -16,43 +16,6 @@ pageEncoding="ISO-8859-1"%>
     <div>
         <img class="logo" src="resources/logo.gif" alt="logo">
     </div>
-    <ul class="nav">
-        <li>
-            <a href="" class="active">
-                <span>Programare inmormantari</span>
-            </a>
-        </li>
-        <li>
-            <a href="">
-                <span>Persoane</span>
-            </a>
-        </li>
-        <li>
-            <a href="">
-                <span>Morminte</span>
-            </a>
-        </li>
-        <li>
-            <a href="">
-                <span>Evidenta sesizarilor</span>
-            </a>
-        </li>
-        <li>
-            <a href="">
-                <span>Evidenta contractelor de concesiune</span>
-            </a>
-        </li>
-        <li>
-            <a href="">
-                <span>Evidenta cereri locuri</span>
-            </a>
-        </li>
-        <li>
-            <a href="">
-                <span>Iesire</span>
-            </a>
-        </li>
-    </ul>
 </div>
 
 <div class="content">
