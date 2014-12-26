@@ -10,6 +10,7 @@ function loadOptions(name) {
     name = name.trim();
     $.getJSON('resources/options.json', function(data) {
         var f = document.createElement("form");
+        f.setAttribute('class', 'option-form')
         f.setAttribute('method',"get");
         f.setAttribute('action',data[name]["Servlet"]);
 
