@@ -12,5 +12,11 @@
         {"Name":"Gestiune decedati"},
         {"Name":"Vizualizare \"Registrul index anual al decedatilor\""},
         {"Name":"Vizualizare \"Registrul anual de evidenta a decedatilor fara apartinatori\""}]
+    },
+"Evidenta contractelor de concesiune" :{
+    "Servlet": "ConcessionServlet",
+    "Options":
+        [{"Name": "Gestiunea contractelor de concesiune"},
+        {"Name": "Vizualizare \"Registrul anual de evidenta a contractelor de concesiune\""}]
     }
 }

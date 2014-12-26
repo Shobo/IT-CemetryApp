@@ -1,6 +1,7 @@
 $(document).ready(function () {
+    $("#year-selection").change(changeYear);
     loadMenu();
-    if (window.location.search.indexOf('act=') == -1)
+    if (window.location.search.indexOf('?') == -1)
         loadOptions($("title").text());
 });
 
@@ -42,7 +43,16 @@ function loadMenu() {
             anch.appendChild(span);
             li.appendChild(anch);
             ul.appendChild(li);
-        })
+        });
         document.getElementsByClassName("menu")[0].appendChild(ul);
-    })
+    });
+}
+
+function changeYear() {
+    var yearval = $(this).find(':selected').text();
+    var actval = $(this).attr("name");
+    $.get("ConcessionServlet", {year:yearval, act:actval},
+        function(data) {
+            $(".content").html($(data).filter(".content").html());
+        }, "html");
 }

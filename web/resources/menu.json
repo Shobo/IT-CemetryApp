@@ -2,6 +2,6 @@
 {"Name": "Persoane", "Ref": "Persons.jsp"},
 {"Name": "Morminte", "Ref": "Graves.jsp"},
 {"Name": "Evidenta sesizarilor"},
-{"Name": "Evidenta contractelor de concesiune"},
+{"Name": "Evidenta contractelor de concesiune", "Ref": "Concessions.jsp"},
 {"Name": "Evidenta cereri locuri"},
 {"Name": "Iesire"}]
