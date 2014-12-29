@@ -189,6 +189,115 @@ h1 {
     margin-left: 10px;
 }
 
+.img-button {
+    position: relative;
+    width: 30px;
+    height: 30px;
+}
 
+.autocomplete-select {
+    position: absolute;
+    height: 100px;
+    margin: 0px;
+    padding: 0px;
+    list-style-type: none;
+    background-color: #FBFAE5;
+    border: 1px solid #2D241A;
+    width: 298px;
+    display: none;
+    overflow: scroll;
+}
 
+.autocomplete-select li:hover {
+    background-color: #2D241A;
+    color: #909090;
+    cursor: pointer;
+}
 
+.data-form fieldset {
+    border: 0px;
+    padding-top: 0px;
+    padding-bottom: 20px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 800px;
+}
+
+.content div {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.data-form label{
+    float: left;
+    clear: left;
+    width: 250px;
+    text-align: right;
+    margin-top: 10px;
+    margin-right: 10px;
+}
+
+.data-form input[type=text], .data-form select {
+    float: left;
+    margin-top: 10px;
+    border-radius: 5px;
+    background-color: #FBFAE5;
+    border: 1px solid #2D241A;
+    height: 25px;
+    width: 300px;
+}
+
+.data-form input[type=submit] {
+    position: relative;
+    left: 260px;
+    display: inline;
+    margin-top: 10px;
+    border-radius: 5px;
+    background-color: #FBFAE5;
+    border: 1px solid #2D241A;
+    height: 25px;
+    width: 98px;
+}
+
+.form-header {
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 0px;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.form-header1 {
+    font-size: 18px;
+    text-decoration: underline;
+    margin-top: 0px;
+    margin-bottom: 5px;
+}
+
+.form-radio, .radio-text{
+    display: inline-block;
+    margin-top: 5px;
+    float: left;
+    position: relative;
+    left: 260px;
+    top: -20px;
+}
+
+.form-radio{
+    clear: left;
+}
+
+.radio-text {
+    margin-bottom: 5px;
+}
+
+.hidden-obj {
+    display: none;
+}
+
+.more-icon {
+    width: 16px;
+    height: 16px;
+    vertical-align: text-top;
+}

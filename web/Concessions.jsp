@@ -20,9 +20,14 @@
     </div>
 </div>
 
-<% if (session.getAttribute("option") != null && session.getAttribute("option").equals(Constants.VIEW_CONCESSIONS)) { %>
+<% if (session.getAttribute("option") != null) { %>
 <div class="title-div">
-    <% out.print(Constants.CONCESSIONS_REGISTER); %>
+    <% if (session.getAttribute("option").equals(Constants.VIEW_CONCESSIONS))
+            out.print(Constants.CONCESSIONS_REGISTER);
+       else
+            out.print(Constants.CONCESSION_MANAGEMENT);%>
+
+    <% if (session.getAttribute("option").equals(Constants.VIEW_CONCESSIONS)) { %>
     <div class="selection-div">
         <label for="year-selection">Anul</label>
         <select id="year-selection" name="<%out.print(StringEscapeUtils.escapeHtml3(Constants.VIEW_CONCESSIONS));%>">
@@ -33,47 +38,61 @@
             <% } %>
         </select>
     </div>
+    <% } %>
 </div>
 <% } %>
 
 <div class="content">
     <% if (session.getAttribute("option") != null) { %>
-    <table class="data-table">
-        <tr>
-            <% if (session.getAttribute("option").equals(Constants.CONCESSION_MANAGEMENT)) { %>
-                <th></th>
-            <% } %>
-            <th>Nr. crt</th>
-            <th>Numar contract</th>
-            <th>Data eliberarii</th>
-            <th>Nume concesionar</th>
-            <th>Adresa concesionar</th>
-        </tr>
-
-        <% List<Concession> concessions = (List<Concession>)session.getAttribute("concessions");
-                if (concessions.size() == 0) { %>
-        <tr>
-            <td colspan="<%int val = session.getAttribute("option").equals(Constants.CONCESSION_MANAGEMENT)?6:5; out.print(val);%>">
-                <% out.print(Constants.NO_RECORDS_MSG); %>
-            </td>
-        </tr>
-
-        <% }
-           int i = 0;
-           for (Concession c : concessions) {%>
-
-        <tr>
-            <% if (session.getAttribute("option").equals(Constants.CONCESSION_MANAGEMENT)) { %>
-                <td><input class="selected-con" type="checkbox" value="<% out.print(c.getNumber());%>"></td>
-            <% } %>
-            <td><% out.print(i++); %></td>
-            <td><% out.print(c.getNumber()); %></td>
-            <td><% out.print(new SimpleDateFormat("dd-MMM-yyyy").format(c.getDate())); %></td>
-            <td><% out.print(c.getOwner().getLastName() + " " + c.getOwner().getFirstName()); %></td>
-            <td class="address-td"><% out.print(c.getOwner().getAddress()); %></td>
-        </tr>
+    <form action="ConcessionServlet" method="GET">
+        <% if (session.getAttribute("option").equals(Constants.CONCESSION_MANAGEMENT)) { %>
+        <input class="img-button" type="image" src="resources/file_add.png" value="Add" name="act"/>
+        <input class="img-button" type="image" src="resources/file_edit.png" value="Edit" name="act"/>
+        <input class="img-button" type="image" src="resources/file_delete.png" value="Delete" name="act"/>
         <% } %>
-    </table>
+
+        <table class="data-table">
+            <tr>
+                <% if (session.getAttribute("option").equals(Constants.CONCESSION_MANAGEMENT)) { %>
+                    <th></th>
+                <% } %>
+                <th>Nr. crt</th>
+                <th>Numar contract</th>
+                <th>Data eliberarii</th>
+                <th>Nume concesionar</th>
+                <th>Adresa concesionar</th>
+            </tr>
+
+            <% List<Concession> concessions = (List<Concession>)session.getAttribute("concessions");
+                    if (concessions.size() == 0) { %>
+            <tr>
+                <td colspan="<%int val = session.getAttribute("option").equals(Constants.CONCESSION_MANAGEMENT)?6:5; out.print(val);%>">
+                    <% out.print(Constants.NO_RECORDS_MSG); %>
+                </td>
+            </tr>
+
+            <% }
+               int i = 0;
+               for (Concession c : concessions) {
+                    i++;%>
+
+            <tr>
+                <% if (session.getAttribute("option").equals(Constants.CONCESSION_MANAGEMENT)) { %>
+                    <td><input name="selected-con" class="selected-con" type="checkbox" value="<% out.print(i);%>"></td>
+                <% } %>
+                <td><% out.print(i); %></td>
+                <td>
+                    <a href="ConcessionServlet?act=Edit&nr=<% out.print(c.getNumber()); %>">
+                        <% out.print(c.getNumber()); %>
+                    </a>
+                </td>
+                <td><% out.print(new SimpleDateFormat("dd-MMM-yyyy").format(c.getDate())); %></td>
+                <td><% out.print(c.getOwner().getLastName() + " " + c.getOwner().getFirstName()); %></td>
+                <td class="address-td"><% out.print(c.getOwner().getAddress()); %></td>
+            </tr>
+            <% } %>
+        </table>
+    </form>
     <% session.removeAttribute("option"); %>
     <% } %>
 </div>
