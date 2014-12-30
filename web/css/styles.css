@@ -297,7 +297,17 @@ h1 {
 }
 
 .more-icon {
+    display: inline;
     width: 16px;
     height: 16px;
     vertical-align: text-top;
+}
+
+.more-text {
+    display: inline;
+    text-decoration: underline;
+}
+
+.more-text:hover {
+    cursor: pointer;
 }

@@ -1,6 +1,8 @@
 $(document).ready(function() {
     $(".form-radio").change(showNumberBox);
     $("#grave-name").change(loadParcels);
+    if($("#grave-name").find(':first-child').val() >= 0)
+        $("#grave-name").trigger("change");
     $("#grave-parcel").change(loadGraves);
     $("#grave-number").change(setSurface);
     $("#doc-nr").keyup(fillNumber);
@@ -15,23 +17,34 @@ function showNumberBox() {
 }
 
 function loadParcels() {
+    var found = false;
     var input = $("#grave-parcel");
     if ($(this).find(':first-child').val() < 0)
         $(this).find(":first-child").remove();
     $.get("ConcessionServlet", {act:"loadGraveDetails", field:"parcel", graveyard:$(this).find(':selected').val()},
         function(data) {
             input.empty();
-            for (var i = -1; i < data.length; i++) {
+            var start = -1;
+            if (input.attr("value") != "")
+                start = 0;
+            for (var i = start; i < data.length; i++) {
                 var option = document.createElement("option");
                 option.setAttribute('value', i);
-                if (i >= 0)
+                if (i >= 0) {
                     option.innerHTML = data[i]['number'];
+                    if (data[i]['number'] == input.attr('value')) {
+                        option.setAttribute('selected', 'selected');
+                        found = true;
+                    }
+                }
                 else
                     option.innerHTML = "Selectează...";
                 input.append(option);
             }
+            if (found)
+                $("#grave-parcel").trigger("change");
         }, "json");
-    input.show();
+    $("#grave-number").empty();
 }
 
 function loadGraves() {
@@ -42,34 +55,37 @@ function loadGraves() {
             parcel:$(this).find(':selected').val()},
         function(data) {
             input.empty();
-            for (var i = -1; i < data.length; i++) {
+            var start = -1;
+            if (input.attr("value") != "")
+                start = 0;
+            for (var i = start; i < data.length; i++) {
                 var option = document.createElement("option");
-                if (i >= 0) {
+                if (i >= 0 && (data[i]['free'] == true || data[i]['number'] == input.attr('value'))) {
                     option.innerHTML = data[i]['number'];
-                    option.setAttribute('value', data[i]['surface']);
+                    option.setAttribute('surface', data[i]['surface']);
+                    option.setAttribute('value', i);
+                    if (data[i]['number'] == input.attr('value'))
+                        option.setAttribute('selected', 'selected');
+                    input.append(option);
                 }
-                else {
+                else if (i < 0) {
                     option.innerHTML = "Selectează...";
                     option.setAttribute('value', i);
+                    input.append(option);
                 }
-                input.append(option);
             }
         }, "json");
-    input.show();
 }
 
 function setSurface() {
     if ($(this).find(':first-child').val() < 0)
         $(this).find(":first-child").remove();
-    $("#grave-surface").val($("#grave-number").find(':selected').val() + " m2");
+    $("#grave-surface").val($("#grave-number").find(':selected').attr("surface") + " m2");
 }
 
 function fillNumber() {
     var selected = $('input[name=receipt-cause]:checked');
-    console.log(selected.val());
     var selectedPar = $('.radio-text[value=' + selected.val() + ']');
-    console.log(selectedPar.text());
-    console.log($(this).val());
     var s = selectedPar.text();
     var replWith = $(this).val();
     if (replWith == "")

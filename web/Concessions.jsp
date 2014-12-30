@@ -78,11 +78,11 @@
 
             <tr>
                 <% if (session.getAttribute("option").equals(Constants.CONCESSION_MANAGEMENT)) { %>
-                    <td><input name="selected-con" class="selected-con" type="checkbox" value="<% out.print(i);%>"></td>
+                    <td><input name="selected-con" class="selected-con" type="checkbox" value="<% out.print(c.getNumber());%>"></td>
                 <% } %>
                 <td><% out.print(i); %></td>
                 <td>
-                    <a href="ConcessionServlet?act=Edit&nr=<% out.print(c.getNumber()); %>">
+                    <a href="ConcessionServlet?act=Edit&selected-con=<% out.print(c.getNumber()); %>">
                         <% out.print(c.getNumber()); %>
                     </a>
                 </td>

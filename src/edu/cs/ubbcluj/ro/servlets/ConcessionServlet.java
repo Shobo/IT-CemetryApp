@@ -16,8 +16,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @WebServlet("/ConcessionServlet")
@@ -43,19 +45,23 @@ public class ConcessionServlet extends HttpServlet {
 
         switch (act) {
             case Constants.DELETE :
-                int nr = Integer.parseInt(request.getParameter("selected-con"));
-                deleteConcession(concessionService.getAll().get(nr));
-                concessions = concessionService.getAll();
+                String[] toDelete = request.getParameterValues("selected-con");
+                for (String val : toDelete)
+                    deleteConcession(findConcessionByNumber(val));
+                session.setAttribute("concessions", concessionService.getAll());
                 session.setAttribute("option", Constants.CONCESSION_MANAGEMENT);
-                break;
+                response.sendRedirect(Constants.CONCESSIONS_PAGE + "?act=" + Constants.CONCESSION_MANAGEMENT.replace(' ', '+'));
+                return;
             case Constants.AUTOCOMPLETE :
                 response.setContentType("application/json");
                 response.getWriter().print(jsonOwners(request.getParameter("filter"), request.getParameter("field")));
                 return;
-            case Constants.ADD :
+            case Constants.ADD:
                 session.setAttribute("graveyards", graveyardService.getAll());
-                RequestDispatcher rd = request.getRequestDispatcher(Constants.CONCESSION_MANAGEMENT_PAGE);
-                rd.forward(request, response);
+                break;
+            case Constants.EDIT:
+                session.setAttribute("graveyards", graveyardService.getAll());
+                session.setAttribute("concession", findConcessionByNumber(request.getParameter("selected-con")));
                 break;
             case Constants.VIEW_CONCESSIONS :
                 int year = Calendar.getInstance().get(Calendar.YEAR);
@@ -66,14 +72,7 @@ public class ConcessionServlet extends HttpServlet {
                 break;
             case "loadGraveDetails" :
                 String toLoad = request.getParameter("field");
-                String res = "";
-                int graveyard = Integer.parseInt(request.getParameter("graveyard"));
-                if (toLoad.equals("parcel"))
-                    res = jsonParcels(graveyardService.getAll().get(graveyard));
-                if (toLoad.equals("grave")) {
-                    int parcel = Integer.parseInt(request.getParameter("parcel"));
-                    res = jsonGraves(graveyardService.getAll().get(graveyard).getParcels().get(parcel));
-                }
+                String res = loadGraveDetails(toLoad, request.getParameter("graveyard"), request.getParameter("parcel"));
                 response.setContentType("application/json");
                 response.getWriter().print(res);
                 return;
@@ -84,7 +83,95 @@ public class ConcessionServlet extends HttpServlet {
         if (concessions != null)
             session.setAttribute("concessions", concessions);
         RequestDispatcher rd = request.getRequestDispatcher(Constants.CONCESSIONS_PAGE);
+        if (act.equals(Constants.ADD) || act.equals(Constants.EDIT))
+            rd = request.getRequestDispatcher(Constants.CONCESSION_MANAGEMENT_PAGE);
         rd.forward(request, response);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String act = req.getParameter("act");
+        HttpSession session = req.getSession();
+
+        switch (act) {
+            case Constants.SAVE :
+                Concession c = findConcessionByNumber(req.getParameter("concession-nr"));
+                Owner o = getOwner(req.getParameter("concessionar-name"), req.getParameter("concessionar-cnp"),
+                        req.getParameter("concessionar-address"));
+                Graveyard g = graveyardService.getAll().get(Integer.parseInt(req.getParameter("grave-name")));
+                Parcel p = g.getParcels().get(Integer.parseInt(req.getParameter("grave-parcel")));
+                Grave grave = p.getGraves().get(Integer.parseInt(req.getParameter("grave-number")));
+                if (o == null) {
+                    System.out.print("owner is null");
+                    return;
+                }
+                if (grave == null) {
+                    System.out.print("grave is null");
+                    return;
+                }
+                if (c == null)
+                    createConcession(req.getParameter("concession-nr"), o, grave, req.getParameter("receipt-number"));
+                else
+                    editConcession(c, o, grave, req.getParameter("receipt-number"));
+
+        }
+
+        session.setAttribute("concessions", concessionService.getAll());
+        session.setAttribute("option", Constants.CONCESSION_MANAGEMENT);
+        resp.sendRedirect(Constants.CONCESSIONS_PAGE + "?act=" + Constants.CONCESSION_MANAGEMENT.replace(' ', '+'));
+    }
+
+    private void editConcession(Concession con, Owner o, Grave g, String receipt) {
+        if (con.getOwner().getId() != o.getId())
+            con.setOwner(o);
+        if (con.getGrave().getId() != g.getId())
+            con.setGrave(g);
+        if (con.getReceipts().size() > 0 && !con.getReceipts().get(0).getReceiptNumber().toString().equals(receipt))
+            con.getReceipts().get(0).setReceiptNumber(new BigInteger(receipt));
+        concessionService.updateConcession(con);
+    }
+
+    private void createConcession(String con, Owner o, Grave g, String receipt) {
+        Concession c = new Concession();
+        c.setOwner(o);
+        c.setGrave(g);
+        c.setNumber(new BigInteger(con));
+        c.setDate(new Date());
+        c.setPeriod(20);
+        concessionService.insertConcession(c);
+        c = findConcessionByNumber(c.getNumber().toString());
+
+        if (receipt != null && !receipt.equals("")) {
+            Receipt r = new Receipt();
+            r.setReceiptNumber(new BigInteger(receipt));
+            r.setStartingDate(new Date());
+            Calendar cal = Calendar.getInstance();
+            cal.set(Calendar.YEAR, cal.get(Calendar.YEAR) + 20);
+            r.setEndingDate(cal.getTime());
+            r.setConcession(c);
+            receiptService.insertReceipt(r);
+        }
+
+    }
+
+    private Concession findConcessionByNumber(String id) {
+        List<Concession> concessions = concessionService.getAll();
+        for (Concession c: concessions)
+            if (c.getNumber().toString().equals(id))
+                return c;
+        return null;
+    }
+
+    private String loadGraveDetails(String toLoad, String grNr, String prcNr) {
+        String res = "";
+        int graveyard = Integer.parseInt(grNr);
+        if (toLoad.equals("parcel"))
+            res = jsonParcels(graveyardService.getAll().get(graveyard));
+        if (toLoad.equals("grave")) {
+            int parcel = Integer.parseInt(prcNr);
+            res = jsonGraves(graveyardService.getAll().get(graveyard).getParcels().get(parcel));
+        }
+        return res;
     }
 
     private void deleteConcession(Concession con) {
@@ -98,8 +185,9 @@ public class ConcessionServlet extends HttpServlet {
         List<Concession> result = new ArrayList<>();
 
         for (Concession c : concessions) {
-            Calendar.getInstance().setTime(c.getDate());
-            if (Calendar.getInstance().get(Calendar.YEAR) == year)
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(c.getDate());
+            if (cal.get(Calendar.YEAR) == year)
                 result.add(c);
         }
         return result;
@@ -120,15 +208,28 @@ public class ConcessionServlet extends HttpServlet {
         List<Grave> graves = p.getGraves();
         JsonArray res = new JsonArray();
         for (Grave g : graves) {
-            if (g.getConcessions().size() == 0) {
-                JsonObject obj = new JsonObject();
-                obj.addProperty("number", g.getNumber());
-                obj.addProperty("surface", g.getSurface());
-                res.add(obj);
-            }
+            JsonObject obj = new JsonObject();
+            obj.addProperty("number", g.getNumber());
+            obj.addProperty("surface", g.getSurface());
+            obj.addProperty("free", g.getConcessions().isEmpty());
+            res.add(obj);
         }
         return res.toString();
     }
+
+
+
+    private Owner getOwner(String name, String cnp, String address) throws UnsupportedEncodingException {
+        name = new String(name.getBytes("iso-8859-1"), "UTF-8");
+        address = new String(address.getBytes("iso-8859-1"), "UTF-8");
+        List<Owner> owners = ownerService.getAll();
+        for (Owner o : owners) {
+            String fullname = o.getLastName() + " " + o.getFirstName();
+            if (fullname.equals(name) && Integer.toString(o.getId()).equals(cnp) && o.getAddress().equals(address))
+                return o;
+        }
+        return null;
+     }
 
     private String jsonOwners(String filter, String field) throws UnsupportedEncodingException {
         filter = new String(filter.getBytes("iso-8859-1"), "UTF-8");
