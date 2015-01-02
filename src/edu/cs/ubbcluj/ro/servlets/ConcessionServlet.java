@@ -2,6 +2,7 @@ package edu.cs.ubbcluj.ro.servlets;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.sun.deploy.net.HttpRequest;
 import edu.cs.ubbcluj.ro.model.*;
 import edu.cs.ubbcluj.ro.repository.service.*;
 import edu.cs.ubbcluj.ro.utils.ConcessionWriter;
@@ -26,6 +27,8 @@ import java.util.List;
 
 @WebServlet("/ConcessionServlet")
 public class ConcessionServlet extends HttpServlet {
+    public static final String OWNER_MSG= "Proprietarul nu este înregistrat în sistem. Mergeți la secțiunea Persoane >" +
+            " Gestiunea proprietarilor > Adaugare pentru a aduga un nou proprietar";
 
     @EJB
     ConcessionService concessionService;
@@ -110,33 +113,57 @@ public class ConcessionServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String act = req.getParameter("act");
         HttpSession session = req.getSession();
+        String error = checkParameters(req);
 
         switch (act) {
             case Constants.SAVE :
-                Concession c = findConcessionByNumber(req.getParameter("concession-nr"));
-                Owner o = getOwner(req.getParameter("concessionar-name"), req.getParameter("concessionar-cnp"),
-                        req.getParameter("concessionar-address"));
-                Graveyard g = graveyardService.getAll().get(Integer.parseInt(req.getParameter("grave-name")));
-                Parcel p = g.getParcels().get(Integer.parseInt(req.getParameter("grave-parcel")));
-                Grave grave = p.getGraves().get(Integer.parseInt(req.getParameter("grave-number")));
-                if (o == null) {
-                    System.out.print("owner is null");
-                    return;
+                if (error == null) {
+                    Concession c = findConcessionByNumber(req.getParameter("concession-nr"));
+                    Owner o = getOwner(req.getParameter("concessionar-name"), req.getParameter("concessionar-cnp"),
+                            req.getParameter("concessionar-address"));
+                    Graveyard g = graveyardService.getAll().get(Integer.parseInt(req.getParameter("grave-name")));
+                    Parcel p = g.getParcels().get(Integer.parseInt(req.getParameter("grave-parcel")));
+                    Grave grave = p.getGraves().get(Integer.parseInt(req.getParameter("grave-number")));
+                    if (o == null)
+                        error = OWNER_MSG;
+                    if (c == null)
+                        createConcession(req.getParameter("concession-nr"), o, grave, req.getParameter("receipt-number"));
+                    else
+                        editConcession(c, o, grave, req.getParameter("receipt-number"));
                 }
-                if (grave == null) {
-                    System.out.print("grave is null");
-                    return;
-                }
-                if (c == null)
-                    createConcession(req.getParameter("concession-nr"), o, grave, req.getParameter("receipt-number"));
-                else
-                    editConcession(c, o, grave, req.getParameter("receipt-number"));
                 break;
         }
 
-        session.setAttribute("concessions", concessionService.getAll());
-        session.setAttribute("option", Constants.CONCESSION_MANAGEMENT);
-        resp.sendRedirect(Constants.CONCESSIONS_PAGE + "?act=" + Constants.CONCESSION_MANAGEMENT.replace(' ', '+'));
+        if (error == null) {
+            session.setAttribute("concessions", concessionService.getAll());
+            session.setAttribute("option", Constants.CONCESSION_MANAGEMENT);
+            resp.sendRedirect(Constants.CONCESSIONS_PAGE + "?act=" + Constants.CONCESSION_MANAGEMENT.replace(' ', '+'));
+        } else {
+            session.setAttribute("error", error);
+            resp.sendRedirect(Constants.CONCESSION_MANAGEMENT_PAGE + "?act=" + act);
+        }
+    }
+
+    private String checkParameters(HttpServletRequest req) {
+        if (req.getParameter("concession-nr").isEmpty())
+            return ("Introduceti o valoare pentru numarul concesiunii");
+        if (req.getParameter("concessionar-name").isEmpty())
+            return ("Introduceti o valoare pentru numele concesionarului");
+        if (req.getParameter("concessionar-cnp").isEmpty())
+            return ("Introduceti o valoare pentru CNP-ul concesionarului");
+        if (req.getParameter("concessionar-cnp").isEmpty())
+            return ("Introduceti o valoare pentru adresa concesionarului");
+        if (req.getParameter("grave-name") == null)
+            return ("Selectati o valoare pentru numele cimitirului");
+        if (req.getParameter("grave-parcel") == null)
+            return ("Selectati o valoare pentru numarul parcelei");
+        if (req.getParameter("grave-parcel") == null)
+            return ("Selectati o valoare pentru numarul parcelei");
+        if (req.getParameter("grave-number") == null)
+            return ("Selectati o valoare pentru numarul mormatului");
+        if (req.getParameter("receipt-number").isEmpty())
+            return ("Introduceti numarul chitantei");
+        return null;
     }
 
     private List<Concession> filter(String value) throws UnsupportedEncodingException {

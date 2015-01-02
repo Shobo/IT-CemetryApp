@@ -25,6 +25,7 @@
     <div>
         <form class="data-form" method="POST" action="ConcessionServlet">
             <fieldset>
+                <p class="error-msg"><% if (session.getAttribute("error") != null) out.print(session.getAttribute("error"));%></p>
                 <p class="form-header"><% out.print(Constants.HEADER0); %></p>
                 <label for="concession-nr">Numar</label>
                 <input type="text" id="concession-nr" name="concession-nr"
@@ -108,7 +109,8 @@
         </form>
     </div>
 </div>
-<% session.removeAttribute("concession"); %>
+<% session.removeAttribute("concession");
+session.removeAttribute("error");%>
 
 </body>
 </html>

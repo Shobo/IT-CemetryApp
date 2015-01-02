@@ -46,10 +46,10 @@
     <% if (session.getAttribute("option") != null) { %>
     <form action="ConcessionServlet" method="GET">
         <% if (session.getAttribute("option").equals(Constants.CONCESSION_MANAGEMENT)) { %>
-        <input class="img-button" type="image" src="resources/file_add.png" value="Add" name="act"/>
-        <input class="img-button" type="image" src="resources/file_edit.png" value="Edit" name="act" disabled="true"/>
-        <input class="img-button" type="image" src="resources/file_delete.png" value="Delete" name="act" disabled="true"/>
-        <input class="img-button" type="image" src="resources/file_save.png" value="Save" name="act" disabled="true">
+        <input class="img-button" type="image" src="resources/file_add.png" value="Add" name="act" title="Adăugare"/>
+        <input class="img-button" type="image" src="resources/file_edit.png" value="Edit" name="act" disabled="true" title="Modificare"/>
+        <input class="img-button" type="image" src="resources/file_delete.png" value="Delete" name="act" disabled="true" title="Ștergere">
+        <input class="img-button" type="image" src="resources/file_save.png" value="Save" name="act" disabled="true" title="Descărcare">
         <input type="submit" class="search-box" name="act" value="Caută">
         <input type="text" class="search-box" placeholder="Caută" name="filter-value">
         <a hidden id="download" href="resources/temp/<% if (session.getAttribute("saved") != null)

@@ -325,3 +325,8 @@ h1 {
     border: 1px solid #2D241A;
     height: 25px;
 }
+
+.error-msg {
+    font-weight: bold;
+    color: red;
+}
