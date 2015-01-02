@@ -22,7 +22,7 @@ public class Constants {
     public static final String DELETE = "Delete";
     public static final String EDIT = "Edit";
     public static final String AUTOCOMPLETE = "Autocomplete";
-    public static final String SAVE = "Salveaza";
-    public static final String CANCEL = "Anuleaza";
+    public static final String SAVE = "Save";
+    public static final String SEARCH = "Caută";
     public static final String PRINT = "Listeaza";
 }

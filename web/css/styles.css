@@ -195,6 +195,10 @@ h1 {
     height: 30px;
 }
 
+.img-button:not(:first-child) {
+    opacity: 0.2;
+}
+
 .autocomplete-select {
     position: absolute;
     height: 100px;
@@ -310,4 +314,14 @@ h1 {
 
 .more-text:hover {
     cursor: pointer;
+}
+
+.search-box {
+    position: relative;
+    float: right;
+    border-radius: 5px;
+    margin-left: 5px;
+    background-color: #FBFAE5;
+    border: 1px solid #2D241A;
+    height: 25px;
 }

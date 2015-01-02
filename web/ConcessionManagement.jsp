@@ -100,7 +100,6 @@
             <fieldset>
                 <input type="submit" name="act" value="Salveaza"/>
                 <input type="submit" name="act" value="Anuleaza"/>
-                <input type="submit" name="act" value="Listeaza"/>
             </fieldset>
             <fieldset>
                 <img src="resources/down-arrow.png" class="more-icon">

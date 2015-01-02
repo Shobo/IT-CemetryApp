@@ -7,8 +7,26 @@ $(document).ready(function () {
     $(".autocomplete").keyup(showSuggestions);
     if ($(".img-button").length != 0)
         $(".img-button").css('left', $(".data-table").offset().left - $(".content").offset().left );
+    if ($(".search-box").length != 0)
+        $(".search-box").css('right', ($(".content").innerWidth() - $(".data-table").innerWidth())/2);
     prepareForAutocomplete();
+    if ($("#download").length > 0 && $("#download").attr("href").match(/.*doc/)) {
+        window.location = $('#download').attr('href');
+        $("#download").attr("href", "resources/temp/");
+    }
+    $(".selected-con").click(enableButton);
 });
+
+function enableButton() {
+    if ($(".selected-con:checked").length > 0) {
+        $(".img-button:not(:first-child)").prop('disabled', false);
+        $(".img-button:not(:first-child)").css("opacity", "1.0");
+    }
+    else {
+        $(".img-button:not(:first-child)").prop('disabled', true);
+        $(".img-button:not(:first-child)").css("opacity", "0.2");
+    }
+}
 
 $(document).click(function() {
     $(".autocomplete-select").hide();

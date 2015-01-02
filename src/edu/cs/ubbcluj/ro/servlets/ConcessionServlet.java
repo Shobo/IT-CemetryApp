@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import edu.cs.ubbcluj.ro.model.*;
 import edu.cs.ubbcluj.ro.repository.service.*;
+import edu.cs.ubbcluj.ro.utils.ConcessionWriter;
 import edu.cs.ubbcluj.ro.utils.Constants;
 
 import javax.ejb.EJB;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.awt.*;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
@@ -43,6 +45,7 @@ public class ConcessionServlet extends HttpServlet {
         HttpSession session = request.getSession();
         List<Concession> concessions = null;
 
+        act = new String(act.getBytes("iso-8859-1"), "UTF-8");
         switch (act) {
             case Constants.DELETE :
                 String[] toDelete = request.getParameterValues("selected-con");
@@ -52,6 +55,16 @@ public class ConcessionServlet extends HttpServlet {
                 session.setAttribute("option", Constants.CONCESSION_MANAGEMENT);
                 response.sendRedirect(Constants.CONCESSIONS_PAGE + "?act=" + Constants.CONCESSION_MANAGEMENT.replace(' ', '+'));
                 return;
+            case Constants.SAVE :
+                if (request.getParameter("selected-con") != null) {
+                    ConcessionWriter.writeConcession(findConcessionByNumber(request.getParameter("selected-con")),
+                            getServletContext().getRealPath("resources/temp/" + request.getParameter("selected-con") + ".doc"),
+                            getServletContext().getRealPath("resources/concession-template.doc"));
+                    session.setAttribute("saved", request.getParameter("selected-con"));
+                }
+                concessions = concessionService.getAll();
+                session.setAttribute("option", Constants.CONCESSION_MANAGEMENT);
+                break;
             case Constants.AUTOCOMPLETE :
                 response.setContentType("application/json");
                 response.getWriter().print(jsonOwners(request.getParameter("filter"), request.getParameter("field")));
@@ -70,15 +83,20 @@ public class ConcessionServlet extends HttpServlet {
                 concessions = filterByYear(year);
                 session.setAttribute("option", act);
                 break;
+            case Constants.CONCESSION_MANAGEMENT :
+                concessions = concessionService.getAll();
+                session.setAttribute("option", act);
+                break;
             case "loadGraveDetails" :
                 String toLoad = request.getParameter("field");
                 String res = loadGraveDetails(toLoad, request.getParameter("graveyard"), request.getParameter("parcel"));
                 response.setContentType("application/json");
                 response.getWriter().print(res);
                 return;
-            case Constants.CONCESSION_MANAGEMENT :
-                concessions = concessionService.getAll();
-                session.setAttribute("option", act);
+            case Constants.SEARCH :
+                concessions = filter(request.getParameter("filter-value"));
+                session.setAttribute("option", Constants.CONCESSION_MANAGEMENT);
+                break;
         }
         if (concessions != null)
             session.setAttribute("concessions", concessions);
@@ -113,12 +131,27 @@ public class ConcessionServlet extends HttpServlet {
                     createConcession(req.getParameter("concession-nr"), o, grave, req.getParameter("receipt-number"));
                 else
                     editConcession(c, o, grave, req.getParameter("receipt-number"));
-
+                break;
         }
 
         session.setAttribute("concessions", concessionService.getAll());
         session.setAttribute("option", Constants.CONCESSION_MANAGEMENT);
         resp.sendRedirect(Constants.CONCESSIONS_PAGE + "?act=" + Constants.CONCESSION_MANAGEMENT.replace(' ', '+'));
+    }
+
+    private List<Concession> filter(String value) throws UnsupportedEncodingException {
+        List<Concession> all = concessionService.getAll();
+        if (value == null || value.equals(""))
+            return all;
+        value = new String(value.getBytes("iso-8859-1"), "UTF-8").toLowerCase();
+        List<Concession> res = new ArrayList<>();
+        for (Concession c : all) {
+            String name = c.getOwner().getLastName() + " " + c.getOwner().getLastName();
+            if (c.getNumber().toString().contains(value) || name.toLowerCase().contains(value)
+                    || c.getDate().toString().contains(value) || c.getOwner().getAddress().toLowerCase().contains(value))
+                res.add(c);
+        }
+        return res;
     }
 
     private void editConcession(Concession con, Owner o, Grave g, String receipt) {
@@ -216,8 +249,6 @@ public class ConcessionServlet extends HttpServlet {
         }
         return res.toString();
     }
-
-
 
     private Owner getOwner(String name, String cnp, String address) throws UnsupportedEncodingException {
         name = new String(name.getBytes("iso-8859-1"), "UTF-8");
