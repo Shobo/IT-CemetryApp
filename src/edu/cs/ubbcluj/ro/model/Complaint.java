@@ -10,7 +10,7 @@ import java.math.BigInteger;
  * 
  */
 @Entity
-@Table(name="complaints")
+@Table(name="complains")
 @NamedQuery(name="Complaint.findAll", query="SELECT c FROM Complaint c")
 public class Complaint implements Serializable {
 	private static final long serialVersionUID = 1L;
