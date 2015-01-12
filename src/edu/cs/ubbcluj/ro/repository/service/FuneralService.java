@@ -16,4 +16,6 @@ public interface FuneralService {
 	void deleteFuneral(Funeral Funeral);
 
 	List<Funeral> getAll();
+	
+	Funeral getById(int id);
 }

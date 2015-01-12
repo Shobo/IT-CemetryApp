@@ -19,9 +19,11 @@ public class Transaction implements Serializable {
 	@Id
 	private int id;
 
-	private String after;
+	@Column(name="after_trans")
+	private String afterTrans;
 
-	private String before;
+	@Column(name="before_trans")
+	private String beforeTrans;
 
 	@Column(name="document_number")
 	private BigInteger documentNumber;
@@ -29,10 +31,12 @@ public class Transaction implements Serializable {
 	@Column(name="modification_details")
 	private String modificationDetails;
 
-	private String table;
+	@Column(name="table_name")
+	private String tableName;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date timestamp;
+	@Column(name="trans_time")
+	private Date transTime;
 
 	//bi-directional many-to-one association to User
 	@ManyToOne
@@ -49,20 +53,20 @@ public class Transaction implements Serializable {
 		this.id = id;
 	}
 
-	public String getAfter() {
-		return this.after;
+	public String getAfterTrans() {
+		return this.afterTrans;
 	}
 
-	public void setAfter(String after) {
-		this.after = after;
+	public void setAfterTrans(String afterTrans) {
+		this.afterTrans = afterTrans;
 	}
 
-	public String getBefore() {
-		return this.before;
+	public String getBeforeTrans() {
+		return this.beforeTrans;
 	}
 
-	public void setBefore(String before) {
-		this.before = before;
+	public void setBeforeTrans(String beforeTrans) {
+		this.beforeTrans = beforeTrans;
 	}
 
 	public BigInteger getDocumentNumber() {
@@ -81,20 +85,20 @@ public class Transaction implements Serializable {
 		this.modificationDetails = modificationDetails;
 	}
 
-	public String getTable() {
-		return this.table;
+	public String getTableName() {
+		return this.tableName;
 	}
 
-	public void setTable(String table) {
-		this.table = table;
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
 	}
 
-	public Date getTimestamp() {
-		return this.timestamp;
+	public Date getTransTime() {
+		return this.transTime;
 	}
 
-	public void setTimestamp(Date timestamp) {
-		this.timestamp = timestamp;
+	public void setTransTime(Date transTime) {
+		this.transTime = transTime;
 	}
 
 	public User getUser() {

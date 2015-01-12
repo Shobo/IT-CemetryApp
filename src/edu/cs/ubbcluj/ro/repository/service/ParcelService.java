@@ -15,4 +15,6 @@ public interface ParcelService {
 	void deleteParcel(Parcel parcel);
 	
 	List<Parcel> getAll();
+	
+	Parcel getById(int id);
 }

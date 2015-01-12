@@ -16,4 +16,6 @@ public interface StateService {
 	void deleteState(State State);
 
 	List<State> getAll();
+	
+	State getById(int id);
 }

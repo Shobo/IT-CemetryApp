@@ -18,8 +18,6 @@ public class User implements Serializable {
 	@Id
 	private int id;
 
-	private boolean admin;
-
 	private String password;
 
 	private String username;
@@ -37,14 +35,6 @@ public class User implements Serializable {
 
 	public void setId(int id) {
 		this.id = id;
-	}
-
-	public boolean getAdmin() {
-		return this.admin;
-	}
-
-	public void setAdmin(boolean admin) {
-		this.admin = admin;
 	}
 
 	public String getPassword() {

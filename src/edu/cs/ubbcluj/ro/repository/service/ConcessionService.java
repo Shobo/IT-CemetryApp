@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.ejb.Local;
 
+import edu.cs.ubbcluj.ro.model.Complaint;
 import edu.cs.ubbcluj.ro.model.Concession;
 
 
@@ -16,4 +17,6 @@ public interface ConcessionService {
 	void deleteConcession(Concession Concession);
 
 	List<Concession> getAll();
+	
+	Concession getById(int id);
 }

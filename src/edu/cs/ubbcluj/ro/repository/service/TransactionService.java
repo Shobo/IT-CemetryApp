@@ -16,4 +16,6 @@ public interface TransactionService {
 	void deleteTransaction(Transaction Transaction);
 
 	List<Transaction> getAll();
+	
+	Transaction getById(int id);
 }

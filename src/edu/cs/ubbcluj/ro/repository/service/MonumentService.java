@@ -14,4 +14,6 @@ public interface MonumentService {
 	void deleteMonument(Monument Monument);
 
 	List<Monument> getAll();
+	
+	Monument getById(int id);
 }

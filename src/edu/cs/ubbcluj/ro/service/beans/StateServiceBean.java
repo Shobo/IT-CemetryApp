@@ -7,6 +7,7 @@ import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 
+import edu.cs.ubbcluj.ro.model.Concession;
 import edu.cs.ubbcluj.ro.model.State;
 import edu.cs.ubbcluj.ro.repository.StateRepository;
 import edu.cs.ubbcluj.ro.repository.RepositoryException;
@@ -53,6 +54,16 @@ public class StateServiceBean implements StateService {
 		try {
 			return repo.getAll();
 		} catch (RepositoryException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	@Override
+	public State getById(int id){
+		try{
+			return repo.getById(id);
+		}catch (RepositoryException e) {
 			e.printStackTrace();
 		}
 		return null;

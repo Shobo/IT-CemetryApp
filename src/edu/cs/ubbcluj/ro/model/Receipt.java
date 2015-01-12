@@ -25,8 +25,13 @@ public class Receipt implements Serializable {
 	@Column(name="ending_date")
 	private Date endingDate;
 
-	@Column(name="receipt_number")
-	private BigInteger receiptNumber;
+	@Column(name="entity_id")
+	private int entityId;
+
+	private String receiptscol;
+
+	@Column(name="recepit_number")
+	private BigInteger recepitNumber;
 
 	@Temporal(TemporalType.DATE)
 	@Column(name="starting_date")
@@ -63,12 +68,28 @@ public class Receipt implements Serializable {
 		this.endingDate = endingDate;
 	}
 
-	public BigInteger getReceiptNumber() {
-		return this.receiptNumber;
+	public int getEntityId() {
+		return this.entityId;
 	}
 
-	public void setReceiptNumber(BigInteger receiptNumber) {
-		this.receiptNumber = receiptNumber;
+	public void setEntityId(int entityId) {
+		this.entityId = entityId;
+	}
+
+	public String getReceiptscol() {
+		return this.receiptscol;
+	}
+
+	public void setReceiptscol(String receiptscol) {
+		this.receiptscol = receiptscol;
+	}
+
+	public BigInteger getRecepitNumber() {
+		return this.recepitNumber;
+	}
+
+	public void setRecepitNumber(BigInteger recepitNumber) {
+		this.recepitNumber = recepitNumber;
 	}
 
 	public Date getStartingDate() {

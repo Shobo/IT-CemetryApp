@@ -7,6 +7,7 @@ import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 
+import edu.cs.ubbcluj.ro.model.Concession;
 import edu.cs.ubbcluj.ro.model.Receipt;
 import edu.cs.ubbcluj.ro.repository.ReceiptRepository;
 import edu.cs.ubbcluj.ro.repository.RepositoryException;
@@ -58,6 +59,16 @@ public class ReceiptServiceBean implements ReceiptService {
 		}
 		return null;
 
+	}
+	
+	@Override
+	public Receipt getById(int id){
+		try{
+			return repo.getById(id);
+		}catch (RepositoryException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	

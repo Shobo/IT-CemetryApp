@@ -20,6 +20,8 @@ public class Owner implements Serializable {
 
 	private String address;
 
+	private String cnp;
+
 	private boolean deleted;
 
 	@Column(name="first_name")
@@ -49,6 +51,14 @@ public class Owner implements Serializable {
 
 	public void setAddress(String address) {
 		this.address = address;
+	}
+
+	public String getCnp() {
+		return this.cnp;
+	}
+
+	public void setCnp(String cnp) {
+		this.cnp = cnp;
 	}
 
 	public boolean getDeleted() {

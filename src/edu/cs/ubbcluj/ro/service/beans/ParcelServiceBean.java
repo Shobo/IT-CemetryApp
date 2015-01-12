@@ -7,6 +7,7 @@ import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 
+import edu.cs.ubbcluj.ro.model.Concession;
 import edu.cs.ubbcluj.ro.model.Parcel;
 import edu.cs.ubbcluj.ro.repository.ParcelRepository;
 import edu.cs.ubbcluj.ro.repository.RepositoryException;
@@ -61,5 +62,15 @@ public class ParcelServiceBean implements ParcelService{
 		}
 		return null;
 
+	}
+	
+	@Override
+	public Parcel getById(int id){
+		try{
+			return repo.getById(id);
+		}catch (RepositoryException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }
