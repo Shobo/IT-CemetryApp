@@ -9,7 +9,7 @@
 
     <link href="css/styles.css" rel="stylesheet" type="text/css">
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="jquery-1.11.1.js"></script>
     <script src="jquery.js"></script>
     <title>Morminte</title>
 </head>
