@@ -47,7 +47,6 @@ public class PersonServlet extends HttpServlet {
         }
         RequestDispatcher requestDispatcher = request.getRequestDispatcher(Constants.PERSONS_PAGE);
         if (act.equals(Constants.ADD) || act.equals(Constants.EDIT)){
-            //TODO PERSONS_MANAGEMENT_PAGE
             // requestDispatcher = request.getRequestDispatcher(Constants.PERSONS_MANAGEMENT_PAGE);
         }
         requestDispatcher.forward(request, response);
