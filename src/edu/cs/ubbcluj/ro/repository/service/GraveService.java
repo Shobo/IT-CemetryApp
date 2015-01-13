@@ -14,4 +14,6 @@ public interface GraveService {
 	void deleteGrave(Grave grave);
 
 	List<Grave> getAll();
+	
+	Grave getById(int id);
 }

@@ -57,5 +57,15 @@ public class ComplaintServiceBean implements ComplaintService {
 		}
 		return null;
 	}
+	
+	@Override
+	public Complaint getById(int id){
+		try{
+			return repo.getById(id);
+		}catch (RepositoryException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 }

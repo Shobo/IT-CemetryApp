@@ -15,4 +15,6 @@ public interface GraveyardService {
 	void deleteGraveyard(Graveyard graveyard);
 
 	List<Graveyard> getAll();
+	
+	Graveyard getById(int id);
 }

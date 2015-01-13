@@ -14,6 +14,8 @@ public interface ComplaintService {
 	Complaint updateComplaint(Complaint complaint);
 
 	void deleteComplaint(Complaint complaint);
-
+	
+	Complaint getById(int id);
+	
 	List<Complaint> getAll();
 }

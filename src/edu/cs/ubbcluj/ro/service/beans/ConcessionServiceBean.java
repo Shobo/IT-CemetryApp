@@ -7,6 +7,7 @@ import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 
+import edu.cs.ubbcluj.ro.model.Complaint;
 import edu.cs.ubbcluj.ro.model.Concession;
 import edu.cs.ubbcluj.ro.repository.ConcessionRepository;
 import edu.cs.ubbcluj.ro.repository.RepositoryException;
@@ -58,4 +59,13 @@ public class ConcessionServiceBean implements ConcessionService {
 		return null;
 	}
 
+	@Override
+	public Concession getById(int id){
+		try{
+			return repo.getById(id);
+		}catch (RepositoryException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 }

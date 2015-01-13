@@ -16,4 +16,6 @@ public interface RequestService {
 	void deleteRequest(Request Request);
 
 	List<Request> getAll();
+	
+	Request getById(int id);
 }

@@ -15,4 +15,6 @@ public interface ReceiptService {
 	void deleteReceipt(Receipt Receipt);
 
 	List<Receipt> getAll();
+	
+	Receipt getById(int id);
 }

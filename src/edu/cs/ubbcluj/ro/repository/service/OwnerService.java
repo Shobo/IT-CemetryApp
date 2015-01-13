@@ -16,4 +16,6 @@ public interface OwnerService {
 	void deleteOwner(Owner Owner);
 
 	List<Owner> getAll();
+	
+	Owner getById(int id);
 }
