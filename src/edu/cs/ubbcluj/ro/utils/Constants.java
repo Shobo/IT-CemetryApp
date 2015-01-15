@@ -19,11 +19,12 @@ public class Constants {
     //Persons
     public static final String OWNER_MANAGEMENT = "Gestiune proprietari";
     public static final String DEAD_MANAGEMENT = "Gestiune decedati";
-    public static final String VIEW_OWNED_DEAD = "Vizualizare \"Registrul index anual al decedatilor\"";
+    public static final String VIEW_DEAD = "Vizualizare \"Registrul index anual al decedatilor\"";
     public static final String VIEW_UNOWNED_DEAD = "Vizualizare \"Registrul anual de evidenta a decedatilor fara apartinatori\"";
     public static final String OWNED_DEAD_REGISTER = "Registrul index anual al decedatilor";
     public static final String UNOWNED_DEAD_REGISTER = "Registrul anual de evidenta a decedatilor fara apartinatori";
     public static final String PERSONS_PAGE = "Persons.jsp";
+    public static final String PERSONS_MANAGEMENT_PAGE = "PersonsManagement.jsp";
 
     //Funerals
     public static final String FUNERALS_MANAGEMENT = "Gestiunea inmormantarilor";
@@ -33,6 +34,13 @@ public class Constants {
     //Funeral Parts
     public static final String HEADERF0 = "Decedat";
     public static final String HEADERF1 = "Locul inmormantari";
+
+    //Graves
+    public static final String GRAVES_MANAGEMENT = "Gestiune morminte";
+    public static final String VIEW_MONUMENT_GRAVES = "Vizualizare \"Registrul de morminte monumente\"";
+    public static final String VIEW_GRAVES = "Vizualizare \"Registrul de morminte\"";
+    public static final String MONUMENTS_REGISTER = "Registrul de morminte monumente";
+    public static final String GRAVES_REGISTER = "Registrul de morminte";
 
     //Error messages
     public static final String NO_RECORDS_MSG = "Nu au fost gasite inregistrari!";

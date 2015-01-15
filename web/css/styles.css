@@ -190,6 +190,15 @@ h1 {
     margin-left: 10px;
 }
 
+#year-selection-copy {
+    font-size: 14px;
+    font-weight: normal;
+    border-radius: 5px;
+    background-color: #FBFAE5;
+    padding-left: 10px;
+    margin-left: 10px;
+}
+
 .img-button {
     position: relative;
     width: 30px;
