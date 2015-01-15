@@ -43,6 +43,9 @@ public class ConcessionServlet extends HttpServlet {
     @EJB
     TransactionService transactionService;
 
+    @EJB
+    UserService userService;
+
     protected void doGet(HttpServletRequest request,
                          HttpServletResponse response) throws ServletException, IOException {
         String act = request.getParameter("act");
@@ -59,7 +62,7 @@ public class ConcessionServlet extends HttpServlet {
                 session.setAttribute("option", Constants.CONCESSION_MANAGEMENT);
                 response.sendRedirect(Constants.CONCESSIONS_PAGE + "?act=" + Constants.CONCESSION_MANAGEMENT.replace(' ', '+'));
                 return;
-            case Constants.SAVE :
+            case "Save" :
                 if (request.getParameter("selected-con") != null) {
                     ConcessionWriter.writeConcession(findConcessionByNumber(request.getParameter("selected-con")),
                             getServletContext().getRealPath("resources/temp/" + request.getParameter("selected-con") + ".doc"),
@@ -77,7 +80,7 @@ public class ConcessionServlet extends HttpServlet {
                 session.setAttribute("graveyards", graveyardService.getAll());
                 break;
             case Constants.EDIT:
-                //session.setAttribute("transactions", getTransactions());
+                session.setAttribute("transactions", getTransactions(findConcessionByNumber(request.getParameter("selected-con"))));
                 session.setAttribute("graveyards", graveyardService.getAll());
                 session.setAttribute("concession", findConcessionByNumber(request.getParameter("selected-con")));
                 break;
@@ -131,8 +134,10 @@ public class ConcessionServlet extends HttpServlet {
                         error = OWNER_MSG;
                     if (c == null)
                         createConcession(req.getParameter("concession-nr"), o, grave, req.getParameter("receipt-number"));
-                    else
+                    else {
+                        addTransaction(c, o, grave, req.getParameter("receipt-number"));
                         editConcession(c, o, grave, req.getParameter("receipt-number"));
+                    }
                 }
                 break;
         }
@@ -147,14 +152,45 @@ public class ConcessionServlet extends HttpServlet {
         }
     }
 
-  /*  private List<Transaction> getTransactions() {
+
+    private void addTransaction(Concession c, Owner o, Grave g, String receipt) {
+        String after = "Nume concesionar: " + o.getLastName() + " " + o.getLastName()+ "\n"
+                +"CNP concesionar: " + o.getCnp()  + "\n"
+                +"Cimitir " + g.getParcel().getGraveyard().getName() + ", Parcela " + g.getParcel().getNumber()
+                +"Nr. " + g.getNumber() + "\n"
+                +"Chitanta: " + receipt;
+
+        String before = "Nume concesionar: " + c.getOwner().getLastName() + " "
+                + c.getOwner().getLastName()+ "\n"
+                +"CNP concesionar: " + c.getOwner().getCnp()  + "\n"
+                +"Cimitir " + c.getGrave().getParcel().getGraveyard().getName()
+                +", Parcela " + c.getGrave().getParcel().getNumber()
+                +"Nr. " + c.getGrave().getNumber() + "\n"
+                +"Chitanta: " + c.getReceipts().get(0).getReceiptNumber();
+
+      //  if (before.equals(after))
+        //    return;
+
+        Transaction t = new Transaction();
+        t.setRecordId(c.getId());
+        t.setAfterTrans(after);
+        t.setBeforeTrans(before);
+        t.setTableName("Concessions");
+        t.setTransTime(new Date());
+        t.setModificationDetails("modified");
+        t.setUser(userService.getUser(26));
+
+        transactionService.updateTransaction(t);
+    }
+
+    private List<Transaction> getTransactions(Concession c) {
         List<Transaction> all = transactionService.getAll();
         List<Transaction> res = new ArrayList<>();
         for (Transaction t : all)
-            if (t.getTable().equals("Concessions"))
+            if (t.getTableName().equals("Concessions") && t.getRecordId() == c.getId())
                 res.add(t);
         return res;
-    }*/
+    }
 
     private String checkParameters(HttpServletRequest req) {
         if (req.getParameter("concession-nr").isEmpty())
@@ -295,7 +331,7 @@ public class ConcessionServlet extends HttpServlet {
         List<Owner> owners = ownerService.getAll();
         for (Owner o : owners) {
             String fullname = o.getLastName() + " " + o.getFirstName();
-            if (fullname.equals(name) && Integer.toString(o.getId()).equals(cnp) && o.getAddress().equals(address))
+            if (fullname.equals(name) && o.getCnp().equals(cnp) && o.getAddress().equals(address))
                 return o;
         }
         return null;

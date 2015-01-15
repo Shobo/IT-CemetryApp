@@ -28,6 +28,9 @@ public class Transaction implements Serializable {
 	@Column(name="document_number")
 	private BigInteger documentNumber;
 
+    @Column(name="record_id")
+    private Integer recordId;
+
 	@Column(name="modification_details")
 	private String modificationDetails;
 
@@ -52,6 +55,10 @@ public class Transaction implements Serializable {
 	public void setId(int id) {
 		this.id = id;
 	}
+
+    public Integer getRecordId() {return this.recordId; }
+
+    public void setRecordId(Integer recordId) {this.recordId = recordId; }
 
 	public String getAfterTrans() {
 		return this.afterTrans;

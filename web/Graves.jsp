@@ -88,23 +88,23 @@
                 <% if (session.getAttribute("option").equals(Constants.GRAVES_MANAGEMENT)) { %>
                 <td><input name="selected-con" class="selected-con" type="checkbox" value="<% out.print(grave.get(2));%>"></td>
                 <% } %>
-                <td><% out.print(i); %></td>
-                <td>
+                <td class="address-td"><% out.print(i); %></td>
+                <td class="address-td">
                     <a href="ConcessionServlet?act=Edit&selected-con=<%= grave.get(2) %>">
                         <%= grave.get(2) %>
                     </a>
                 </td>
-                <td><%= grave.get(0) %></td>
-                <td><%= grave.get(1) %></td>
-                <td><%= grave.get(3) + " " + grave.get(4) %></td>
-                <td><%= grave.get(5) %></td>
-                <td><%= grave.get(6) %></td>
-                <td><%= grave.get(7) + " " + grave.get(8) %></td>
-                <td><%= grave.get(9) %></td>
-                <td><%= grave.get(10) %></td>
-                <td><%= grave.get(11) %></td>
-                <td><%= grave.get(12) %></td>
-                <td><img src="<%= grave.get(13) %>" width="25px" height="25px"/></td>
+                <td class="address-td"><%= grave.get(0) %></td>
+                <td class="address-td"><%= grave.get(1) %></td>
+                <td class="address-td"><%= grave.get(3) + " " + grave.get(4) %></td>
+                <td class="address-td"><%= grave.get(5) %></td>
+                <td class="address-td"><%= grave.get(6) %></td>
+                <td class="address-td"><%= grave.get(7) + " " + grave.get(8) %></td>
+                <td class="address-td"><%= grave.get(9) %></td>
+                <td class="address-td"><%= grave.get(10) %></td>
+                <td class="address-td"><%= grave.get(11) %></td>
+                <td class="address-td"><%= grave.get(12) %></td>
+                <td class="address-td"><img src="resources/grave.jpg" width="25px" height="25px"/></td>
             </tr>
             <% } %>
         </table>

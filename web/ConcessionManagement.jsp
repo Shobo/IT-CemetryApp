@@ -44,12 +44,14 @@
                 <label for="concessionar-cnp">CNP</label>
                 <ul name="concessionar-cnp" class="autocomplete-select" property="cnp"></ul>
                 <input type="text" id="concessionar-cnp" name="concessionar-cnp" class="autocomplete"
-                       value="<%if (c != null) out.print(c.getOwner().getId());%>">
+                       value="<%if (c != null) out.print(c.getOwner().getCnp());%>">
                 <br>
                 <label for="concessionar-address">Adresa</label>
                 <ul name="concessionar-address" class="autocomplete-select" property="address"></ul>
                 <input type="text" id="concessionar-address" name="concessionar-address" class="autocomplete"
                        value="<%if (c != null) out.print(c.getOwner().getAddress());%>">
+                <input type="hidden" id="concessionar-id" name="concessionar-id"
+                       value="<%if (c != null) out.print(c.getOwner().getId());%>">
             </fieldset>
 
             <fieldset>
@@ -113,14 +115,13 @@
                 <fieldset>
                     <p class="form-header"><% out.print(Constants.HISTORY); %></p>
                     <div>
-                        <table>
+                        <table class="data-table">
                             <tr>
                                 <th>Data</th>
                                 <th>Utilizator</th>
-                                <th>Nr. document</th>
-                                <th>Tipul operatiei</th>
+                                <th>Valori initiale</th>
+                                <th>Valori dupa modificare</th>
                             </tr>
-                        </table>
                         <% List<Transaction> transactions = (List<Transaction>)session.getAttribute("transactions");
                         if (transactions != null)
                         for (Transaction t : transactions) {
@@ -128,17 +129,11 @@
                         <tr>
                             <td><%out.print(new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss").format(t.getTransTime()));%></td>
                             <td><%out.print(t.getUser().getUsername());%></td>
-                            <td><%out.print(t.getDocumentNumber());%></td>
-                            <td>
-                                <%if (t.getBeforeTrans().isEmpty())
-                                    out.print("Adaugare");
-                                  else if (t.getAfterTrans().isEmpty())
-                                    out.print("Stergere");
-                                  else
-                                    out.print("Modificare");%>
-                            </td>
+                            <td class="address-td"><%out.print(t.getBeforeTrans());%></td>
+                            <td class="address-td"><%out.print(t.getAfterTrans());%></td>
                         </tr>
                         <% } %>
+                        </table>
                     </div>
                 </fieldset>
             </div>
