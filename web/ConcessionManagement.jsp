@@ -3,6 +3,8 @@
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Calendar" %>
 <%@ page import="edu.cs.ubbcluj.ro.model.Concession" %>
+<%@ page import="edu.cs.ubbcluj.ro.model.Transaction" %>
+<%@ page import="java.text.SimpleDateFormat" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -102,10 +104,45 @@
                 <input type="submit" name="act" value="Salveaza"/>
                 <input type="submit" name="act" value="Anuleaza"/>
             </fieldset>
+            <% if (c != null) {%>
             <fieldset>
                 <img src="resources/down-arrow.png" class="more-icon">
                 <p class="more-text">Mai multe detalii</p>
             </fieldset>
+            <div class="history-div">
+                <fieldset>
+                    <p class="form-header"><% out.print(Constants.HISTORY); %></p>
+                    <div>
+                        <table>
+                            <tr>
+                                <th>Data</th>
+                                <th>Utilizator</th>
+                                <th>Nr. document</th>
+                                <th>Tipul operatiei</th>
+                            </tr>
+                        </table>
+                        <% List<Transaction> transactions = (List<Transaction>)session.getAttribute("transactions");
+                        if (transactions != null)
+                        for (Transaction t : transactions) {
+                        %>
+                        <tr>
+                            <td><%out.print(new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss").format(t.getTransTime()));%></td>
+                            <td><%out.print(t.getUser().getUsername());%></td>
+                            <td><%out.print(t.getDocumentNumber());%></td>
+                            <td>
+                                <%if (t.getBeforeTrans().isEmpty())
+                                    out.print("Adaugare");
+                                  else if (t.getAfterTrans().isEmpty())
+                                    out.print("Stergere");
+                                  else
+                                    out.print("Modificare");%>
+                            </td>
+                        </tr>
+                        <% } %>
+                    </div>
+                </fieldset>
+            </div>
+            <% } %>
         </form>
     </div>
 </div>

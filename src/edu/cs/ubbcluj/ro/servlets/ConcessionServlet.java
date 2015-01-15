@@ -2,7 +2,6 @@ package edu.cs.ubbcluj.ro.servlets;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.sun.deploy.net.HttpRequest;
 import edu.cs.ubbcluj.ro.model.*;
 import edu.cs.ubbcluj.ro.repository.service.*;
 import edu.cs.ubbcluj.ro.utils.ConcessionWriter;
@@ -16,7 +15,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.awt.*;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
@@ -41,6 +39,9 @@ public class ConcessionServlet extends HttpServlet {
 
     @EJB
     GraveyardService graveyardService;
+
+    @EJB
+    TransactionService transactionService;
 
     protected void doGet(HttpServletRequest request,
                          HttpServletResponse response) throws ServletException, IOException {
@@ -76,6 +77,7 @@ public class ConcessionServlet extends HttpServlet {
                 session.setAttribute("graveyards", graveyardService.getAll());
                 break;
             case Constants.EDIT:
+                //session.setAttribute("transactions", getTransactions());
                 session.setAttribute("graveyards", graveyardService.getAll());
                 session.setAttribute("concession", findConcessionByNumber(request.getParameter("selected-con")));
                 break;
@@ -113,10 +115,11 @@ public class ConcessionServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String act = req.getParameter("act");
         HttpSession session = req.getSession();
-        String error = checkParameters(req);
+        String error = null;
 
         switch (act) {
             case Constants.SAVE :
+                error = checkParameters(req);
                 if (error == null) {
                     Concession c = findConcessionByNumber(req.getParameter("concession-nr"));
                     Owner o = getOwner(req.getParameter("concessionar-name"), req.getParameter("concessionar-cnp"),
@@ -143,6 +146,15 @@ public class ConcessionServlet extends HttpServlet {
             resp.sendRedirect(Constants.CONCESSION_MANAGEMENT_PAGE + "?act=" + act);
         }
     }
+
+  /*  private List<Transaction> getTransactions() {
+        List<Transaction> all = transactionService.getAll();
+        List<Transaction> res = new ArrayList<>();
+        for (Transaction t : all)
+            if (t.getTable().equals("Concessions"))
+                res.add(t);
+        return res;
+    }*/
 
     private String checkParameters(HttpServletRequest req) {
         if (req.getParameter("concession-nr").isEmpty())
