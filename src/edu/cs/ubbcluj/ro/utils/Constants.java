@@ -32,15 +32,6 @@ public class Constants {
     public static final String MONUMENTS_REGISTER = "Registrul de morminte monumente";
     public static final String GRAVES_REGISTER = "Registrul de morminte";
 
-    //Funerals
-    public static final String FUNERALS_MANAGEMENT = "Gestiunea inmormantarilor";
-    public static final String FUNERAL_PAGE = "Funerals.jsp";
-    public static final String FUNERAL_MANAGEMENT_PAGE = "FuneralManagement.jsp";
-
-    //Funeral Parts
-    public static final String HEADERF0 = "Decedat";
-    public static final String HEADERF1 = "Locul inmormantari";
-
     //Error messages
     public static final String NO_RECORDS_MSG = "Nu au fost gasite inregistrari!";
 
