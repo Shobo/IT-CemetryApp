@@ -1,12 +1,9 @@
 package edu.cs.ubbcluj.ro.servlets;
 
-import edu.cs.ubbcluj.ro.model.Dead;
-import edu.cs.ubbcluj.ro.model.Funeral;
-import edu.cs.ubbcluj.ro.model.Grave;
-import edu.cs.ubbcluj.ro.repository.service.DeadService;
-import edu.cs.ubbcluj.ro.repository.service.FuneralService;
-import edu.cs.ubbcluj.ro.repository.service.GraveService;
-import edu.cs.ubbcluj.ro.repository.service.GraveyardService;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import edu.cs.ubbcluj.ro.model.*;
+import edu.cs.ubbcluj.ro.repository.service.*;
 import edu.cs.ubbcluj.ro.utils.Constants;
 
 import javax.ejb.EJB;
@@ -38,6 +35,9 @@ public class FuneralServlet extends HttpServlet {
     @EJB
     GraveService graveService;
 
+    @EJB
+    OwnerService ownerService;
+
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         String act = request.getParameter("act");
@@ -54,11 +54,23 @@ public class FuneralServlet extends HttpServlet {
                 session.setAttribute("option", Constants.FUNERALS_MANAGEMENT);
                 response.sendRedirect(Constants.FUNERAL_PAGE + "?act=" + Constants.FUNERALS_MANAGEMENT.replace(' ', '+'));
                 return;
+            case Constants.SAVE :
+                if (request.getParameter("selected-con") != null) {
+                    session.setAttribute("saved", request.getParameter("selected-con"));
+                }
+                funerals = funeralService.getAll();
+                session.setAttribute("saved", request.getParameter("selected-con"));
+                break;
+            case Constants.AUTOCOMPLETE:
+                response.setContentType("application/json");
+                response.getWriter().print( jsonDeads(request.getParameter("filter"), request.getParameter("field")));
+                return;
             case Constants.ADD :
                 session.setAttribute("graveyards", graveyardService.getAll());
                 break;
             case Constants.EDIT :
                 session.setAttribute("graveyards", graveyardService.getAll());
+                session.setAttribute("funeral", findFuneralById(request.getParameter("selected-con")));
                 break;
             case Constants.FUNERALS_MANAGEMENT :
                 funerals = funeralService.getAll();
@@ -71,34 +83,56 @@ public class FuneralServlet extends HttpServlet {
         if (act.equals(Constants.ADD) || act.equals(Constants.EDIT))
             rd = request.getRequestDispatcher(Constants.FUNERAL_MANAGEMENT_PAGE);
         rd.forward(request, response);
-
-
-
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String act = request.getParameter("act");
         HttpSession session = request.getSession();
+        String error = checkParameters(request);
 
         switch (act) {
             case Constants.SAVE :
-               // Funeral f = findFuneralById(request.getParameter("funeral-id"));
-               // Grave g = graveService.getAll().get(Integer.parseInt(request.getParameter("parcel-number")));
-                Funeral f = new Funeral();
-                Integer parcel = f.getDead().getGrave().getParcel().getNumber();
-                Dead d = getDead(request.getParameter("dead-name"), request.getParameter("dead-religion"));
+                if (error == null) {
+                    Funeral f = findFuneralById(request.getParameter("funeral-id"));
+                    Dead d = getDead(request.getParameter("name-dead"), request.getParameter("religion-dead"));
+                    Graveyard g = graveyardService.getAll().get(Integer.parseInt(request.getParameter("grave-name")));
+                    Parcel p = g.getParcels().get(Integer.parseInt(request.getParameter("grave-parcel")));
+                    Grave grave = p.getGraves().get(Integer.parseInt(request.getParameter("grave-number")));
 
-                if (d == null)
-                  addFuneral(d, parcel);
+
+                    if (f == null)
+                        createFuneral(d, grave);
+                    else
+                        editFuneral(f, d, grave);
+                }
+                break;
         }
+        if (error == null) {
+            session.setAttribute("funerals", funeralService.getAll());
+            session.setAttribute("option", Constants.FUNERALS_MANAGEMENT);
+            response.sendRedirect(Constants.FUNERAL_PAGE + "?act=" + Constants.FUNERALS_MANAGEMENT.replace(' ', '+'));
+        } else {
+            session.setAttribute("error", error);
+            response.sendRedirect(Constants.FUNERAL_MANAGEMENT_PAGE + "?act=" + act);
+        }
+    }
 
-        session.setAttribute("funerals", funeralService.getAll());
-        session.setAttribute("option", Constants.FUNERALS_MANAGEMENT);
-        response.sendRedirect(Constants.FUNERAL_PAGE + "?act=" + Constants.FUNERALS_MANAGEMENT.replace(' ', '+'));
-
+    private String checkParameters(HttpServletRequest request) {
+        if (request.getParameter("name-dead").isEmpty())
+            return ("Introduceti o valoare pentru numele decedatului");
+        if (request.getParameter("religion-dead").isEmpty())
+            return ("Introduceti o valoare pentru religia decedatului");
+        if (request.getParameter("grave-name") == null)
+            return ("Selectati o valoare pentru numele cimitirului");
+        if (request.getParameter("grave-parcel") == null)
+            return ("Selectati o valoare pentru numarul parcelei");
+        if (request.getParameter("grave-number") == null)
+            return ("Selectati o valoare pentru numarul mormantului");
+        return null;
 
     }
+
 
     private Funeral findFuneralById(String id) {
         List<Funeral> funerals = funeralService.getAll();
@@ -121,34 +155,47 @@ public class FuneralServlet extends HttpServlet {
         return null;
     }
 
-    private Grave getGrave(Integer parcel) {
-        List<Grave> graves = graveService.getAll();
-        for (Grave g : graves) {
-            if ((g.getNumber()).equals(parcel))
-                return g;
+    private String jsonDeads(String filter, String field) throws UnsupportedEncodingException {
+        filter = new String(filter.getBytes("iso-8859-1"), "UTF-8");
+        JsonArray result = new JsonArray();
+        List<Dead> deads = deadService.getAll();
+        for (Dead d : deads) {
+            String name = d.getFirstName() + d.getLastName();
+            if (field.equals("name") && !name.toLowerCase().contains(filter.toLowerCase()))
+                continue;
+            if (field.equals("religion") && !d.getReligion().contains(filter))
+                continue;
+
+            JsonObject obj = new JsonObject();
+            obj.addProperty("name", d.getFirstName() + " " + d.getLastName());
+            obj.addProperty("religion", d.getReligion());
+            result.add(obj);
         }
-        return null;
+        System.out.print(result.size());
+        return result.toString();
+
     }
+
     private void deleteFuneral(Funeral fn) {
-        // for (Dead d : fn.getDead())
-        //    deadService.deleteDead(d);
         funeralService.deleteFuneral(fn);
     }
 
-    private void addFuneral(Dead d,Integer parcel){
-        Funeral f = new Funeral();
-        f.setDead(d);
-        f.setDate(new Date());
+    private void createFuneral(Dead dead, Grave g) {
+        Funeral fun = new Funeral();
+        fun.setDead(dead);
+        fun.getDead().setGrave(g);
+        fun.setDate(new Date());
         Time time = new Time(System.currentTimeMillis());
-        f.setTime(time);
-        parcel = f.getDead().getGrave().getParcel().getNumber();
-        //d.addFuneral(f);
-        //f.setTime(new Time());
-        funeralService.insertFuneral(f);
-
-
+        fun.setTime(time);
+        funeralService.insertFuneral(fun);
     }
 
+    private void editFuneral(Funeral f,Dead d, Grave g) {
+        if (f.getDead().getId() != d.getId())
+            f.setDead(d);
+        if (f.getDead().getGrave().getId() != g.getId())
+            f.getDead().setGrave(g);
+        funeralService.updateFuneral(f);
 
-
+    }
 }
