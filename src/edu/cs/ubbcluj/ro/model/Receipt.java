@@ -84,11 +84,11 @@ public class Receipt implements Serializable {
 		this.receiptscol = receiptscol;
 	}
 
-	public BigInteger getRecepitNumber() {
+	public BigInteger getReceiptNumber() {
 		return this.recepitNumber;
 	}
 
-	public void setRecepitNumber(BigInteger recepitNumber) {
+	public void setReceiptNumber(BigInteger recepitNumber) {
 		this.recepitNumber = recepitNumber;
 	}
 

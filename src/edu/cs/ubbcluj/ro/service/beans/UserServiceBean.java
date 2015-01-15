@@ -92,7 +92,7 @@ public class UserServiceBean implements UserService {
 		User u = this.getByUsername(username);
 		if (u==null)
 			return false;
-		if (u.getPassword().equals(password)) {
+		if (u.getPassword().equals(PasswordEncryptor.hash(password))) {
 			return true;
 		}
 		return false;

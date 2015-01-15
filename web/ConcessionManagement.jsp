@@ -3,6 +3,8 @@
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Calendar" %>
 <%@ page import="edu.cs.ubbcluj.ro.model.Concession" %>
+<%@ page import="edu.cs.ubbcluj.ro.model.Transaction" %>
+<%@ page import="java.text.SimpleDateFormat" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -42,12 +44,14 @@
                 <label for="concessionar-cnp">CNP</label>
                 <ul name="concessionar-cnp" class="autocomplete-select" property="cnp"></ul>
                 <input type="text" id="concessionar-cnp" name="concessionar-cnp" class="autocomplete"
-                       value="<%if (c != null) out.print(c.getOwner().getId());%>">
+                       value="<%if (c != null) out.print(c.getOwner().getCnp());%>">
                 <br>
                 <label for="concessionar-address">Adresa</label>
                 <ul name="concessionar-address" class="autocomplete-select" property="address"></ul>
                 <input type="text" id="concessionar-address" name="concessionar-address" class="autocomplete"
                        value="<%if (c != null) out.print(c.getOwner().getAddress());%>">
+                <input type="hidden" id="concessionar-id" name="concessionar-id"
+                       value="<%if (c != null) out.print(c.getOwner().getId());%>">
             </fieldset>
 
             <fieldset>
@@ -102,10 +106,38 @@
                 <input type="submit" name="act" value="Salveaza"/>
                 <input type="submit" name="act" value="Anuleaza"/>
             </fieldset>
+            <% if (c != null) {%>
             <fieldset>
                 <img src="resources/down-arrow.png" class="more-icon">
                 <p class="more-text">Mai multe detalii</p>
             </fieldset>
+            <div class="history-div">
+                <fieldset>
+                    <p class="form-header"><% out.print(Constants.HISTORY); %></p>
+                    <div>
+                        <table class="data-table">
+                            <tr>
+                                <th>Data</th>
+                                <th>Utilizator</th>
+                                <th>Valori initiale</th>
+                                <th>Valori dupa modificare</th>
+                            </tr>
+                        <% List<Transaction> transactions = (List<Transaction>)session.getAttribute("transactions");
+                        if (transactions != null)
+                        for (Transaction t : transactions) {
+                        %>
+                        <tr>
+                            <td><%out.print(new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss").format(t.getTransTime()));%></td>
+                            <td><%out.print(t.getUser().getUsername());%></td>
+                            <td class="address-td"><%out.print(t.getBeforeTrans());%></td>
+                            <td class="address-td"><%out.print(t.getAfterTrans());%></td>
+                        </tr>
+                        <% } %>
+                        </table>
+                    </div>
+                </fieldset>
+            </div>
+            <% } %>
         </form>
     </div>
 </div>

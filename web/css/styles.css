@@ -9,6 +9,7 @@ body{
     width: 15%;
     height: 100%;
     background-color: #2D241A;
+    z-index: 2;
 }
 
 .nav {
@@ -189,6 +190,15 @@ h1 {
     margin-left: 10px;
 }
 
+#year-selection-copy {
+    font-size: 14px;
+    font-weight: normal;
+    border-radius: 5px;
+    background-color: #FBFAE5;
+    padding-left: 10px;
+    margin-left: 10px;
+}
+
 .img-button {
     position: relative;
     width: 30px;
@@ -312,7 +322,7 @@ h1 {
     text-decoration: underline;
 }
 
-.more-text:hover {
+.more-text:hover, .more-icon:hover {
     cursor: pointer;
 }
 
@@ -329,4 +339,8 @@ h1 {
 .error-msg {
     font-weight: bold;
     color: red;
+}
+
+.history-div {
+    display: none;
 }
