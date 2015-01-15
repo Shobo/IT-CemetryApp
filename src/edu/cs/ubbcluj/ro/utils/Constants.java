@@ -25,6 +25,13 @@ public class Constants {
     public static final String UNOWNED_DEAD_REGISTER = "Registrul anual de evidenta a decedatilor fara apartinatori";
     public static final String PERSONS_PAGE = "Persons.jsp";
 
+    //Graves
+    public static final String GRAVES_MANAGEMENT = "Gestiune morminte";
+    public static final String VIEW_MONUMENT_GRAVES = "Vizualizare \"Registrul de morminte monumente\"";
+    public static final String VIEW_GRAVES = "Vizualizare \"Registrul de morminte\"";
+    public static final String MONUMENTS_REGISTER = "Registrul de morminte monumente";
+    public static final String GRAVES_REGISTER = "Registrul de morminte";
+
     //Error messages
     public static final String NO_RECORDS_MSG = "Nu au fost gasite inregistrari!";
 

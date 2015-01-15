@@ -7,7 +7,6 @@ import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 
-import edu.cs.ubbcluj.ro.model.Concession;
 import edu.cs.ubbcluj.ro.model.Monument;
 import edu.cs.ubbcluj.ro.repository.MonumentRepository;
 import edu.cs.ubbcluj.ro.repository.RepositoryException;
@@ -59,15 +58,16 @@ public class MonumentServiceBean implements MonumentService {
 		return null;
 
 	}
-	
-	@Override
-	public Monument getById(int id){
-		try{
-			return repo.getById(id);
-		}catch (RepositoryException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
 
+    @Override
+    public boolean isMonument(int graveId) {
+        try {
+            if (repo.getById(graveId) != null) {
+                return true;
+            }
+            return false;
+        }catch (RepositoryException e) {
+            return false;
+        }
+    }
 }
