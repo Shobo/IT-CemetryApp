@@ -18,5 +18,10 @@
     "Options":
         [{"Name": "Gestiunea contractelor de concesiune"},
         {"Name": "Vizualizare \"Registrul anual de evidenta a contractelor de concesiune\""}]
-    }
+    },
+"Programare inmormantari" :{
+    "Servlet": "FuneralServlet",
+    "Options":
+        [{"Name": "Gestiunea inmormantarilor"}]
+}
 }

@@ -6,7 +6,19 @@ $(document).ready(function() {
     $("#grave-parcel").change(loadGraves);
     $("#grave-number").change(setSurface);
     $("#doc-nr").keyup(fillNumber);
+    $(".more-text").click(showHistory);
 });
+
+function showHistory() {
+    if ($( ".history-div:hidden").length > 0) {
+        $(".more-text").text("Ascunde");
+        $(".history-div").fadeIn("slow");
+    }
+    else {
+        $(".more-text").text("Mai multe detalii");
+        $(".history-div").fadeOut("slow");
+    }
+}
 
 function showNumberBox() {
     if ($(this).val() == "1" || $(this).val() == "2")
