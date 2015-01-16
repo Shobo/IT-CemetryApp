@@ -165,6 +165,7 @@ public class FuneralServlet extends HttpServlet {
         t.setModificationDetails("modified");
         t.setUser(userService.getUser(26));
 
+        
         transactionService.updateTransaction(t);
     }
 

@@ -108,6 +108,7 @@
                                 <td><% out.print(t.getUser().getUsername());%></td>
                                 <td class="address-td"><% out.print(t.getBeforeTrans());%></td>
                                 <td class="address-td"><% out.print(t.getAfterTrans());%></td>
+
                             </tr>
                             <% } %>
                         </table>

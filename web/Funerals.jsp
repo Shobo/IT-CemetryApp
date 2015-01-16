@@ -72,7 +72,7 @@
             <% } %>
         </table>
     </form>
-    <% session.removeAttribute("option"); %>
+    <% session.removeAttribute("option");%>
     <% } %>
 
 </div>
