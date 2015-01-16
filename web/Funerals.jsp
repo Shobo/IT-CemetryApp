@@ -69,11 +69,8 @@
                 <td><% out.print(f.getDead().getReligion()); %></td>
                 <td><% out.print(f.getTime() + ", " + (new SimpleDateFormat("dd-MM-yyyy").format(f.getDate())) + ", Parcel " + f.getDead().getGrave().getNumber()); %></td>
             </tr>
-
             <% } %>
         </table>
-
-
     </form>
     <% session.removeAttribute("option"); %>
     <% } %>

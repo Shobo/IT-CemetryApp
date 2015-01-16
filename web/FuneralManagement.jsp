@@ -3,6 +3,8 @@
 <%@ page import="edu.cs.ubbcluj.ro.model.Owner" %>
 <%@ page import="edu.cs.ubbcluj.ro.utils.Constants" %>
 <%@ page import="java.util.List" %>
+<%@ page import="edu.cs.ubbcluj.ro.model.Transaction" %>
+<%@ page import="java.text.SimpleDateFormat" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -45,10 +47,10 @@
             <fieldset>
                 <p class="form-header"><% out.print(Constants.HEADERF1); %></p>
                 <label for="dateF"> Data </label>
-                <input type="text" id="dateF" name="dateF"
+                <input type="text" id="dateF" name="dateF" placeholder="zz-LL-AAAA"
                        value="<% if (f != null) out.print(f.getDate());%>"/>
                 <label for="timeF"> Ora </label>
-                <input type="text" id="timeF" name="timeF"
+                <input type="text" id="timeF" name="timeF" placeholder="hh:mm:ss"
                        value="<% if (f != null) out.print(f.getTime());%>"/>
                 <label for="grave-name">Cimitir</label>
                 <select id="grave-name" name="grave-name">
@@ -81,11 +83,40 @@
             </fieldset>
 
             </fieldset>
-
+            <% if (f != null) { %>
+            <fieldset>
+                <img src="resources/down-arrow.png" class="more-icon">
+                <p class="more-text"> Mai multe detalii</p>
+            </fieldset>
+            <div class="history-div">
+                <fieldset>
+                    <p class="form-header"><% out.print(Constants.HISTORY); %></p>
+                    <div>
+                        <table>
+                            <tr>
+                                <th>Data</th>
+                                <th>Utilizator</th>
+                                <th>Valori initiale</th>
+                                <th>Valori dupa modificare</th>
+                            </tr>
+                            <% List<Transaction> transactions = (List<Transaction>)session.getAttribute("transactions");
+                            if (transactions != null)
+                                for (Transaction t : transactions) {
+                            %>
+                            <tr>
+                                <td><% out.print(new SimpleDateFormat("dd-MM-yyyy hh:mm:ss").format(t.getTransTime()));%></td>
+                                <td><% out.print(t.getUser().getUsername());%></td>
+                                <td class="address-td"><% out.print(t.getBeforeTrans());%></td>
+                                <td class="address-td"><% out.print(t.getAfterTrans());%></td>
+                            </tr>
+                            <% } %>
+                        </table>
+                    </div>
+                </fieldset>
+            </div>
+            <% } %>
         </form>
     </div>
-
-
 </div>
 <% session.removeAttribute("funeral");
     session.removeAttribute("error"); %>

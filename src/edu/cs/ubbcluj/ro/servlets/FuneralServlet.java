@@ -17,6 +17,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -37,6 +38,12 @@ public class FuneralServlet extends HttpServlet {
 
     @EJB
     OwnerService ownerService;
+
+    @EJB
+    TransactionService transactionService;
+
+    @EJB
+    UserService userService;
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -59,7 +66,7 @@ public class FuneralServlet extends HttpServlet {
                     session.setAttribute("saved", request.getParameter("selected-con"));
                 }
                 funerals = funeralService.getAll();
-                session.setAttribute("saved", request.getParameter("selected-con"));
+                session.setAttribute("saved", Constants.FUNERALS_MANAGEMENT);
                 break;
             case Constants.AUTOCOMPLETE:
                 response.setContentType("application/json");
@@ -69,12 +76,17 @@ public class FuneralServlet extends HttpServlet {
                 session.setAttribute("graveyards", graveyardService.getAll());
                 break;
             case Constants.EDIT :
+                session.setAttribute("transactions", getTransactions(findFuneralById(request.getParameter("selected-con"))));
                 session.setAttribute("graveyards", graveyardService.getAll());
                 session.setAttribute("funeral", findFuneralById(request.getParameter("selected-con")));
                 break;
             case Constants.FUNERALS_MANAGEMENT :
                 funerals = funeralService.getAll();
                 session.setAttribute("option", act);
+                break;
+            case Constants.SEARCH :
+                funerals = filter(request.getParameter("filter-value"));
+                session.setAttribute("option", Constants.FUNERALS_MANAGEMENT);
                 break;
         }
         if (funerals != null)
@@ -103,8 +115,10 @@ public class FuneralServlet extends HttpServlet {
 
                     if (f == null)
                         createFuneral(d, grave);
-                    else
+                    else {
+                        addTransaction(f, d, grave);
                         editFuneral(f, d, grave);
+                    }
                 }
                 break;
         }
@@ -130,7 +144,37 @@ public class FuneralServlet extends HttpServlet {
         if (request.getParameter("grave-number") == null)
             return ("Selectati o valoare pentru numarul mormantului");
         return null;
+    }
 
+    public void addTransaction(Funeral f, Dead d, Grave g) {
+        String after = "Nume inmormantat: " + d.getLastName() + " " + d.getFirstName() + "\n"
+                + "Religia inmormantat: " + d.getReligion() + "\n"
+                + "Cimitir " + g.getParcel().getGraveyard().getName() + " " + "Parcela " + g.getParcel().getNumber()
+                + "Nr. " + g.getNumber();
+        String before = "Nume inmormantat: " + f.getDead().getLastName() + " " + f.getDead().getFirstName() + "\n"
+                + "Religia inmormantat: " + f.getDead().getReligion() + "\n"
+                + "Cimitir " + f.getDead().getGrave().getParcel().getGraveyard().getName() + " " + "Parcela " + f.getDead().getGrave().getParcel().getNumber()
+                + "Nr. " + f.getDead().getGrave().getNumber();
+
+        Transaction t = new Transaction();
+        t.setRecordId(f.getId());
+        t.setAfterTrans(after);
+        t.setBeforeTrans(before);
+        t.setTableName("Funerals");
+        t.setTransTime(new Date());
+        t.setModificationDetails("modified");
+        t.setUser(userService.getUser(26));
+
+        transactionService.updateTransaction(t);
+    }
+
+    private List<Transaction> getTransactions(Funeral f) {
+        List<Transaction> all = transactionService.getAll();
+        List<Transaction> res = new ArrayList<>();
+        for (Transaction t : all)
+            if (t.getTableName().equals("Funerals") && t.getRecordId() == f.getId())
+                res.add(t);
+        return res;
     }
 
 
@@ -173,8 +217,22 @@ public class FuneralServlet extends HttpServlet {
         }
         System.out.print(result.size());
         return result.toString();
-
     }
+
+    private List<Funeral> filter(String value) throws UnsupportedEncodingException {
+        List<Funeral> all = funeralService.getAll();
+        if (value == null || value.equals(""))
+            return all;
+        value = new String(value.getBytes("iso-8859-1"), "UTF-8").toLowerCase();
+        List<Funeral> result = new ArrayList<>();
+        for (Funeral f : all) {
+            String name = f.getDead().getFirstName() + " " + f.getDead().getLastName();
+            if (name.toLowerCase().contains(value) || f.getDate().toString().contains(value)
+                    ||f.getDead().getReligion().toLowerCase().contains(value))
+                result.add(f);
+        }
+        return result;
+     }
 
     private void deleteFuneral(Funeral fn) {
         funeralService.deleteFuneral(fn);
@@ -190,7 +248,7 @@ public class FuneralServlet extends HttpServlet {
         funeralService.insertFuneral(fun);
     }
 
-    private void editFuneral(Funeral f,Dead d, Grave g) {
+    private void editFuneral(Funeral f, Dead d, Grave g) {
         if (f.getDead().getId() != d.getId())
             f.setDead(d);
         if (f.getDead().getGrave().getId() != g.getId())
